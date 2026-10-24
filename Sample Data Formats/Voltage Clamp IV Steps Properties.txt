@@ -1,0 +1,183 @@
+Protocol: C:\Users\Scientifica\Documents\Molecular Devices\pCLAMP\Params\Logan\4. Ica Assessment\Full IV hold -60_ average runs.pro
+Data File: 20221005_Cell2_WT
+File format: ABF V2.06
+Created: Oct 5, 2022, at 15:11:22.225 [02:47:13]
+Created by: Clampex 10.6
+Acquisition mode: episodic stimulation.
+Axon binary file (integer)
+162000 samples in this file.
+Comment: Vc = -60mV, to +20mv Full IV  10x auto p/n
+
+
+Identifier #1 = 0, #2 = 0, #3 = 0.
+Experiment type: other.
+File GUID:       {10540596-0FE0-4C65-98E8-724A535602A8}.
+
+Input signal: IN 0.    HumSilencer enabled. MultiClamp 700 telegraph parameters:
+    Additional gain: x1.00.
+    Lowpass filter frequency: 2000.00 Hz.
+    Membrane capacitance: 0.00 pF.
+Input signal: IN 1.    MultiClamp 700 telegraph parameters:
+    Additional gain: x1.00.
+    Lowpass filter frequency: 10000.00 Hz.
+    Membrane capacitance: 0.00 pF.
+Input signal: IN 0C.    MultiClamp 700 telegraph parameters:
+    Additional gain: x1.00.
+    Lowpass filter frequency: 2000.00 Hz.
+    Membrane capacitance: 0.00 pF.
+Trial length: 1 run; 9 sweeps of 300.0 ms (6000 samples per channel).
+Minimum time between run starts.
+2.000 s between sweep starts.
+Sampling rate:  20.00 kHz (interval 50.00 µs).
+
+Input signals: IN 0, IN 1 and IN 0C.
+
+Signal Cmd 0 holding level: 0.00 mV.
+Signal Cmd 1 holding level: 0.00 mV.
+Signal Cmd 2 holding level: 0.00 mV.
+Signal Cmd 3 holding level: 0.00 mV.
+Signal Cmd 4 holding level: 0.00 mV.
+Signal Cmd 5 holding level: 0.00 mV.
+Signal Cmd 6 holding level: 0.00 mV.
+Signal Cmd 7 holding level: 0.00 mV.
+
+Analog Output #0
+Waveform:
+EPOCH                    A      B      C      D      E      F      G      H      I      J
+Type                     Step   Step   Step   Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    
+Sample rate              Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   
+First level (mV)         0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+Delta level (mV)         0      10     0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (samples) 2000   1000   2000   0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+Delta duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (ms)      100.0  50.0   100.0  0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Delta duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Train Period (samples)   0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+Pulse Width (samples)    0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+Train Rate (Hz)          0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   
+Pulse Width (ms)         0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Intersweep holding: same as for signal Cmd 0.
+
+Digitial Out pattern: disabled.
+Pre-sweep train: disabled.
+Leak subtraction signals:   IN 0,
+4 subpulses of opposite polarity to waveform executed before sweep.
+Subpulse holding level: 0.00 mV.
+Settling time: 200.00 ms.
+Interpulse time: 0.00 ms.
+
+User list: disabled.
+
+Analog Output #1
+Waveform: disabled.
+
+EPOCH                    A      B      C      D      E      F      G      H      I      J
+Type                     Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    
+Sample rate              Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   
+Delta level              0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+Delta duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Delta duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Pre-sweep train: disabled.
+Leak subtraction: disabled.
+User list: disabled.
+
+Analog Output #2
+Waveform: disabled.
+
+EPOCH                    A      B      C      D      E      F      G      H      I      J
+Type                     Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    
+Sample rate              Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   
+Delta level              0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+Delta duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Delta duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Pre-sweep train: disabled.
+Leak subtraction: disabled.
+User list: disabled.
+
+Analog Output #3
+Waveform: disabled.
+
+EPOCH                    A      B      C      D      E      F      G      H      I      J
+Type                     Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    
+Sample rate              Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   
+Delta level              0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+Delta duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Delta duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Pre-sweep train: disabled.
+Leak subtraction: disabled.
+User list: disabled.
+
+Analog Output #4
+Waveform: disabled.
+
+EPOCH                    A      B      C      D      E      F      G      H      I      J
+Type                     Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    
+Sample rate              Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   
+Delta level              0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+Delta duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Delta duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Pre-sweep train: disabled.
+Leak subtraction: disabled.
+User list: disabled.
+
+Analog Output #5
+Waveform: disabled.
+
+EPOCH                    A      B      C      D      E      F      G      H      I      J
+Type                     Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    
+Sample rate              Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   
+Delta level              0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+Delta duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Delta duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Pre-sweep train: disabled.
+Leak subtraction: disabled.
+User list: disabled.
+
+Analog Output #6
+Waveform: disabled.
+
+EPOCH                    A      B      C      D      E      F      G      H      I      J
+Type                     Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    
+Sample rate              Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   
+Delta level              0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+Delta duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Delta duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Pre-sweep train: disabled.
+Leak subtraction: disabled.
+User list: disabled.
+
+Analog Output #7
+Waveform: disabled.
+
+EPOCH                    A      B      C      D      E      F      G      H      I      J
+Type                     Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    Off    
+Sample rate              Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   Fast   
+Delta level              0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+Delta duration (samples) 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      0      
+First duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Delta duration (ms)      0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    
+Pre-sweep train: disabled.
+Leak subtraction: disabled.
+User list: disabled.
+
+
+Statistics measurements: disabled.
+
+Channel math: disabled.
+
+No pre-sweep train.
+
+Auto analysis: default
