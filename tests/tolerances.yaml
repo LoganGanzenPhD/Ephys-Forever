@@ -1,0 +1,13 @@
+default: {rtol: 1.0e-6, atol: 0.0}
+io:
+  sample_values: {rtol: 0.0, atol: 0.0}       # readers must be exact
+measurements:
+  vs_synthetic: {rtol: 1.0e-3}
+  vs_clampfit:  {rtol: 1.0e-3}
+fit:
+  tau_vs_synthetic: {rtol: 1.0e-2}
+  tau_vs_clampfit:  {rtol: 2.0e-2}
+events:
+  time_window_s: 0.0005        # a detected event within 0.5 ms of a true event is a hit
+  min_recall: 0.95
+  max_false_positive_rate: 0.05

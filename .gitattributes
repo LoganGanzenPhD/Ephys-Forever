@@ -1,0 +1,7 @@
+# Real recordings live in Git LFS.
+tests/data/real/** filter=lfs diff=lfs merge=lfs -text
+*.abf binary
+
+# Generated synthetic data must stay byte-identical on every platform.
+tests/data/synthetic/** text eol=lf
+tests/reference/synthetic/** text eol=lf

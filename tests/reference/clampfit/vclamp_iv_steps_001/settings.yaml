@@ -1,0 +1,7 @@
+source_file: vclamp_iv_steps_001.abf
+software_version: "Clampex 10.6 (acquisition); exporting program and version not recorded"
+exported_on: null
+exported_by: null
+analysis: file_properties
+outputs: [file_properties.txt, expected.json]
+notes: "Header metadata only, no measurements. expected.json adds channel units and spot-check means read with pyabf, not Clampfit, so treat those as a cross-check."

@@ -1,0 +1,46 @@
+{
+  "file": "Voltage Clamp IV Steps.abf",
+  "sha256": "afef84ee0f49a7bdf6b5f80e88d45826d268c9b6592d4fc424c02de2a4491690",
+  "source": "Clampex 10.6 properties export (Voltage Clamp IV Steps Properties.txt); cross-checked with pyabf 2.x",
+  "format": "ABF",
+  "abf_version": "2.06",
+  "created": "2022-10-05T15:11:22.225",
+  "created_by": "Clampex 10.6",
+  "protocol_name": "Full IV hold -60_ average runs",
+  "comment": "Vc = -60mV, to +20mv Full IV  10x auto p/n",
+  "acquisition_mode": "episodic",
+  "total_samples_in_file": 162000,
+  "sweep_count": 9,
+  "channel_count": 3,
+  "samples_per_sweep_per_channel": 6000,
+  "sampling_rate_hz": 20000.0,
+  "sample_interval_us": 50.0,
+  "sweep_duration_ms": 300.0,
+  "sweep_start_interval_s": 2.0,
+  "channels": [
+    {"name": "IN 0",  "units": "pA", "note": "raw membrane current", "lowpass_hz": 2000.0},
+    {"name": "IN 1",  "units": "mV", "note": "membrane potential; sits near -60.8 mV at baseline", "lowpass_hz": 10000.0},
+    {"name": "IN 0C", "units": "pA", "note": "P/N leak-subtracted copy of IN 0 (4 subpulses, opposite polarity)", "lowpass_hz": 2000.0}
+  ],
+  "command": {
+    "dac": "Cmd 0",
+    "units": "mV",
+    "holding_level_in_file_mv": 0.0,
+    "pre_epoch_holding_samples": 93,
+    "epochs": [
+      {"label": "A", "type": "step", "first_level_mv": 0, "delta_level_mv": 0,  "duration_samples": 2000},
+      {"label": "B", "type": "step", "first_level_mv": 0, "delta_level_mv": 10, "duration_samples": 1000},
+      {"label": "C", "type": "step", "first_level_mv": 0, "delta_level_mv": 0,  "duration_samples": 2000}
+    ],
+    "step_start_sample": 2093,
+    "step_end_sample": 3093,
+    "step_levels_mv_by_sweep": [0, 10, 20, 30, 40, 50, 60, 70, 80],
+    "effective_membrane_step_mv_by_sweep": [-60, -50, -40, -30, -20, -10, 0, 10, 20]
+  },
+  "spot_checks_from_pyabf": {
+    "IN 1 sweep 0 mean samples 0..2000 (mV)": -60.791,
+    "IN 1 sweep 8 mean samples 2000..3000 (mV)": 12.329,
+    "IN 0 sweep 4 mean samples 2000..3000 (pA)": -49.083,
+    "IN 0C sweep 4 mean samples 2000..3000 (pA)": -57.878
+  }
+}
