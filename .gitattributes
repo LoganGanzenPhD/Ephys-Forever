@@ -1,5 +1,6 @@
-# Real recordings live in Git LFS.
+# Real recordings live in Git LFS; their manifest stays plain text.
 tests/data/real/** filter=lfs diff=lfs merge=lfs -text
+tests/data/real/MANIFEST.yaml -filter -diff -merge text
 *.abf binary
 
 # Generated synthetic data must stay byte-identical on every platform.

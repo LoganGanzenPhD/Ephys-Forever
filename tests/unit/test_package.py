@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
+from typing import Any
 
 import ephys_forever
 
@@ -24,3 +25,8 @@ def test_core_imports_no_gui_modules() -> None:
     )
     out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
     assert out.stdout.strip() == ""
+
+
+def test_tolerances_file_parses(tolerances: dict[str, Any]) -> None:
+    assert tolerances["io"]["sample_values"] == {"rtol": 0.0, "atol": 0.0}
+    assert tolerances["events"]["time_window_s"] == 0.0005

@@ -24,6 +24,8 @@ dev = [
     "hypothesis>=6.100",
     "ruff>=0.6",
     "mypy>=1.10",
+    "PyYAML>=6.0",
+    "scipy-stubs>=1.14",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -40,10 +42,6 @@ select = ["E", "W", "F", "I", "B", "UP", "NPY", "RUF"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-
-[[tool.mypy.overrides]]
-module = ["scipy", "scipy.*"]
-ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
