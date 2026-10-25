@@ -1,0 +1,42 @@
+source_file: vclamp_iv_steps_001.abf
+original_file_name: "Voltage Clamp IV Steps.abf"
+output_file: "Cursors 3-4.xlsx"
+software_version: "Clampfit (version not recorded)"
+exported_on: 2026-10-25
+exported_by: LG
+analysis: statistics
+sweeps: all
+channel: IN 0C
+baseline:
+  method: mean
+  region_ms: [10.0, 100.0]     # cursors 1-2
+cursors_ms:                    # cursors 3-4, the voltage step (epoch B)
+  c3: 104.65
+  c4: 154.65
+filter: none
+peak_polarity: positive
+rise_fractions: [0.10, 0.90]
+cursor_samples: inclusive      # both cursor samples are included (1001 and 1801 samples)
+notes: >
+  The sheet has no header row. Columns were identified by matching values against
+  Ephys-Forever's measurements of the same file and confirmed by the maintainer on
+  2026-10-25.
+  Sweep 6 half-width (0.545147836 ms) equals sweep 5's value while its rise time is
+  "Not found"; it looks like a stale value and is excluded from comparison.
+shareable: false
+column_map:                    # 0-based column -> Ephys-Forever field (units)
+  0: file
+  1: sweep                     # 1-based
+  2: sweep_start_ms            # from the start of the recording; not compared
+  3: {field: peak_amplitude, unit: pA}
+  4: {field: peak_time, unit: ms}
+  5: {field: mean_amplitude, unit: pA}
+  6: {field: sd, unit: pA}
+  7: {field: area, unit: pA*ms}
+  8: {field: half_width, unit: ms}
+  9: {field: rise_time, unit: ms}
+  10: rise_low_percent
+  11: rise_high_percent
+  12: source_folder
+known_bad_cells:
+  - {sweep: 6, field: half_width, reason: "stale copy of sweep 5; rise time reported Not found"}

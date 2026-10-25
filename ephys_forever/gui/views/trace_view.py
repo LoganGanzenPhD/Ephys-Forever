@@ -6,6 +6,7 @@ from collections.abc import Sequence
 
 import pyqtgraph as pg
 
+from ephys_forever.core.analysis.regions import Region
 from ephys_forever.core.model import Recording
 from ephys_forever.gui.views.envelope import Envelope
 
@@ -14,6 +15,10 @@ LEFT_AXIS_WIDTH = 80
 """Fixed width for every y axis, so the rows line up and linked x ranges match exactly."""
 POINTS_PER_PIXEL = 4
 MIN_POINTS = 2048
+REGION_NAMES = ("baseline", "measure")
+REGION_BRUSHES = {"baseline": (128, 128, 128, 40), "measure": (40, 110, 220, 40)}
+DEFAULT_REGIONS = {"baseline": (0.0, 0.1), "measure": (0.4, 0.6)}
+"""Cursor placement on a new recording, as fractions of the sweep duration."""
 
 
 def sweep_pen(index: int, count: int) -> pg.QtGui.QPen:
@@ -29,7 +34,12 @@ class TraceView(pg.GraphicsLayoutWidget):  # type: ignore[misc]
     the visible range and redrawn on every zoom or pan, so a 30-minute gap-free channel
     costs the same to draw as a short sweep while keeping every peak. Mouse wheel zooms,
     dragging pans, and all rows share the time axis.
+
+    Two cursor regions, ``"baseline"`` (grey) and ``"measure"`` (blue), span every row.
+    Dragging one in any row moves it in all rows and emits ``regionsChanged``.
     """
+
+    regionsChanged = pg.QtCore.Signal(str)
 
     def __init__(self, parent: pg.QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent)
@@ -41,6 +51,9 @@ class TraceView(pg.GraphicsLayoutWidget):  # type: ignore[misc]
         self.curves: dict[int, list[tuple[int, pg.PlotDataItem]]] = {}
         self._envelopes: dict[tuple[int, int], Envelope] = {}
         self._syncing = False
+        self.regions: dict[str, Region] = {}
+        self.region_items: dict[int, dict[str, pg.LinearRegionItem]] = {}
+        self._baseline_visible = True
 
     # -- public API ---------------------------------------------------------------
     def set_recording(self, recording: Recording) -> None:
@@ -50,6 +63,12 @@ class TraceView(pg.GraphicsLayoutWidget):  # type: ignore[misc]
         self.overlay = False
         self.channels = list(range(recording.n_channels))
         self._envelopes.clear()
+        duration = recording.sweeps[0].duration
+        for name in REGION_NAMES:
+            kept = self.regions.get(name)
+            if kept is None or kept.stop > duration - 1.0 / recording.sample_rate:
+                lo, hi = DEFAULT_REGIONS[name]
+                self.regions[name] = Region(lo * duration, hi * duration)
         self._rebuild()
 
     def show_sweep(self, index: int) -> None:
@@ -73,6 +92,25 @@ class TraceView(pg.GraphicsLayoutWidget):  # type: ignore[misc]
             raise IndexError(f"channels {bad} out of range 0..{rec.n_channels - 1}")
         self.channels = sorted(set(channels))
         self._rebuild()
+
+    def set_region(self, name: str, region: Region) -> None:
+        """Move cursor region ``name`` ("baseline" or "measure") in every row."""
+        if name not in REGION_NAMES:
+            raise KeyError(f"no cursor region {name!r}; expected one of {REGION_NAMES}")
+        self.regions[name] = region
+        self._syncing = True
+        try:
+            for items in self.region_items.values():
+                items[name].setRegion((region.start, region.stop))
+        finally:
+            self._syncing = False
+        self.regionsChanged.emit(name)
+
+    def set_baseline_visible(self, on: bool) -> None:
+        """Show or hide the baseline region."""
+        self._baseline_visible = on
+        for items in self.region_items.values():
+            items["baseline"].setVisible(on)
 
     def auto_range(self) -> None:
         """Fit the time axis to a sweep and each y axis to its channel across all sweeps.
@@ -108,6 +146,7 @@ class TraceView(pg.GraphicsLayoutWidget):  # type: ignore[misc]
         self.clear()
         self.plots.clear()
         self.curves.clear()
+        self.region_items.clear()
         rec = self._require()
         for row, c in enumerate(self.channels):
             channel = rec.channels[c]
@@ -125,9 +164,39 @@ class TraceView(pg.GraphicsLayoutWidget):  # type: ignore[misc]
                 plot.setLabel("bottom", "Time", units="s")
             self.plots[c] = plot
             self.curves[c] = []
+            self.region_items[c] = {name: self._add_region(plot, name) for name in REGION_NAMES}
         self._assign_curves(redraw=False)
         if self.plots:
             self.auto_range()
+
+    def _add_region(self, plot: pg.PlotItem, name: str) -> pg.LinearRegionItem:
+        region = self.regions[name]
+        item = pg.LinearRegionItem(
+            values=(region.start, region.stop), brush=REGION_BRUSHES[name], swapMode="sort"
+        )
+        item.setZValue(-10)
+        item.setToolTip(f"{name.capitalize()} region: drag the edges or the middle")
+        item.setVisible(name != "baseline" or self._baseline_visible)
+        item.sigRegionChanged.connect(lambda it, n=name: self._on_region_item(n, it))
+        plot.addItem(item, ignoreBounds=True)
+        return item
+
+    def _on_region_item(self, name: str, item: pg.LinearRegionItem) -> None:
+        """Copy a dragged region to every row and record it."""
+        if self._syncing:
+            return
+        start, stop = (float(v) for v in item.getRegion())
+        if stop <= start:  # collapsed by dragging; keep the last valid region
+            return
+        self.regions[name] = Region(start, stop)
+        self._syncing = True
+        try:
+            for items in self.region_items.values():
+                if items[name] is not item:
+                    items[name].setRegion((start, stop))
+        finally:
+            self._syncing = False
+        self.regionsChanged.emit(name)
 
     def _sync_x(self, box: pg.ViewBox, x_range: tuple[float, float]) -> None:
         """Copy one row's time range to every other row, then redraw.
