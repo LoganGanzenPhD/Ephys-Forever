@@ -379,11 +379,16 @@ def read_abf2(path: str | PathLike[str]) -> Recording:
             )
         )
 
-    scaled = raw_by_sweep.astype(np.float64)
-    scaled *= file_scale[None, :, None]
-    scaled += file_offset[None, :, None]
-    scaled *= si_factor[None, :, None]
-    scaled = np.ascontiguousarray(scaled)
+    # De-interleave one channel at a time straight into the output: reading the strided
+    # int16 view is far cheaper than transposing a float64 copy of the whole file.
+    scaled = np.empty((n_sweeps, n_channels, n_per), dtype=np.float64)
+    for c in range(n_channels):
+        out = scaled[:, c, :]
+        np.multiply(raw_by_sweep[:, c, :], file_scale[c], out=out)
+        if file_offset[c] != 0.0:
+            out += file_offset[c]
+        if si_factor[c] != 1.0:
+            out *= si_factor[c]
 
     sample_interval_us = protocol["fADCSequenceInterval"]
     if not sample_interval_us > 0:
