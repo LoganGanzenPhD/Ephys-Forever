@@ -28,3 +28,20 @@
   comment: "Vc = -60mV, to +20mv Full IV  10x auto p/n"
   notes: "IV step protocol, 10 mV delta in epoch B; P/N leak subtraction on IN 0"
   shareable: false
+- file: vclamp_iv_steps_001.atf
+  original_name: "Voltage Clamp IV Steps.atf"
+  derived_from: vclamp_iv_steps_001.abf
+  format: atf
+  format_version: "1.0"
+  mode: voltage_clamp
+  n_sweeps: 9
+  n_channels: 3
+  channels:
+    - {name: "IN 0", unit: A}
+    - {name: "IN 1", unit: V}
+    - {name: "IN 0C", unit: A}
+  sample_rate_hz: 20000
+  samples_per_sweep_per_channel: 6000
+  acquired_with: "Clampex 10.6; exported to ATF with Clampfit 11.4"
+  notes: "ATF export of vclamp_iv_steps_001.abf, values at 6 significant digits"
+  shareable: false

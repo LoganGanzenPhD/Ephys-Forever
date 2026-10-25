@@ -1,0 +1,9 @@
+source_file: vclamp_iv_steps_001.abf
+software_version: "Clampfit 11.4"
+exported_on: 2026-10-24
+exported_by: L
+analysis: atf_export
+sweeps: all
+channel: all
+outputs: [vclamp_iv_steps_001.atf, file_properties.txt, expected.json]
+notes: "ATF text export of the ABF; file_properties.txt is the File Properties of the export. Sample values carry 6 significant digits."

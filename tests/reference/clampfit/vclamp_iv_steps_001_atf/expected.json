@@ -1,0 +1,22 @@
+{
+  "file": "vclamp_iv_steps_001.atf",
+  "sha256": "2c623d571f6c722660be38768f5ea1317afdba43986a11a42c88562a21cb9a07",
+  "source": "Exported by the maintainer from vclamp_iv_steps_001.abf; values transcribed from file_properties.txt (the export's File Properties) and the ATF header records",
+  "derived_from": "vclamp_iv_steps_001.abf",
+  "atf_version": "1.0",
+  "acquisition_mode": "Episodic Stimulation",
+  "comment": "Vc = -60mV, to +20mv Full IV  10x auto p/n",
+  "total_samples": 162000,
+  "sweep_count": 9,
+  "channel_count": 3,
+  "samples_per_sweep_per_channel": 6000,
+  "sampling_rate_hz": 20000.0,
+  "sweep_duration_ms": 300.0,
+  "sweep_start_interval_s": 2.0,
+  "channels": [
+    {"name": "IN 0", "units": "pA"},
+    {"name": "IN 1", "units": "mV"},
+    {"name": "IN 0C", "units": "pA"}
+  ],
+  "value_precision_significant_digits": 6
+}
