@@ -1,4 +1,4 @@
-"""8-pole Bessel on the IV steps recording against the commercial tool's filtered export."""
+"""8-pole Bessel on the IV steps recording against the commercial tool's filtered exports."""
 
 from __future__ import annotations
 
@@ -17,12 +17,17 @@ from ephys_forever.core.model import Recording
 
 pytestmark = [pytest.mark.reference, pytest.mark.realdata]
 
-CASE = Path(__file__).resolve().parents[1] / "reference" / "clampfit" / "vclamp_iv_steps_001_bessel"
+CLAMPFIT = Path(__file__).resolve().parents[1] / "reference" / "clampfit"
+CASES = [
+    "vclamp_iv_steps_001_bessel",
+    "vclamp_iv_steps_001_bessel_1000hz",
+    "vclamp_iv_steps_001_bessel_2000hz",
+]
 
 
-@pytest.fixture(scope="module")
-def settings() -> dict[str, Any]:
-    with (CASE / "settings.yaml").open(encoding="utf-8") as fh:
+@pytest.fixture(scope="module", params=CASES)
+def settings(request: pytest.FixtureRequest) -> dict[str, Any]:
+    with (CLAMPFIT / request.param / "settings.yaml").open(encoding="utf-8") as fh:
         data: dict[str, Any] = yaml.safe_load(fh)
     return data
 

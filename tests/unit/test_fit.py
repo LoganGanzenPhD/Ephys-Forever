@@ -132,3 +132,12 @@ def test_partial_start_values_by_name_are_refused() -> None:
 def test_exponential_terms_must_be_one_to_three() -> None:
     with pytest.raises(ValueError, match="1 to 3"):
         exponential(4)
+
+
+def test_exponential_fits_a_rising_curve_with_negative_tau() -> None:
+    x = np.linspace(0.0, 0.05, 1001)
+    y = -3e-12 * np.exp(x / 0.02) + 1e-12  # tau = -20 ms
+    result = fit_curve(exponential(1), x, y)
+    assert result.params["tau1"] == pytest.approx(-0.02, rel=1e-6)
+    assert result.params["A1"] == pytest.approx(-3e-12, rel=1e-6)
+    assert result.params["C"] == pytest.approx(1e-12, rel=1e-6)

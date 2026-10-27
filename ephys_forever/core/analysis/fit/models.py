@@ -80,6 +80,9 @@ def _thin(x: FloatArray, y: FloatArray) -> tuple[FloatArray, FloatArray]:
 GRID_SIZE = {1: 40, 2: 24, 3: 14}
 """Candidate time constants per term count for the start-value search."""
 
+RISING_MIN_SPANS = 20.0
+"""Rising (negative) start time constants are at least the fitted span divided by this."""
+
 
 def _exp_function(n_terms: int) -> Callable[[FloatArray, FloatArray], FloatArray]:
     def f(x: FloatArray, p: FloatArray) -> FloatArray:
@@ -98,7 +101,11 @@ def _exp_guess(n_terms: int) -> Callable[[FloatArray, FloatArray], FloatArray]:
         dt = float(np.min(np.diff(xs))) if xs.size > 1 else span
         if span <= 0:
             raise ValueError("an exponential fit needs at least two distinct x values")
-        taus = np.geomspace(max(dt, span * 1e-4) / 2, span * 3, GRID_SIZE[n_terms])
+        decaying = np.geomspace(max(dt, span * 1e-4) / 2, span * 3, GRID_SIZE[n_terms])
+        # Rising candidates stop at |tau| = span / RISING_MIN_SPANS so exp(-x / tau)
+        # stays well inside float range over the fitted span.
+        rising = -np.geomspace(span / RISING_MIN_SPANS, span * 3, GRID_SIZE[n_terms] // 2)
+        taus = np.concatenate([decaying, rising])
         best: tuple[float, FloatArray] | None = None
         for combo in itertools.combinations(taus, n_terms):
             design = np.column_stack([*(np.exp(-xs / t) for t in combo), np.ones_like(xs)])
@@ -131,19 +138,19 @@ def exponential(n_terms: int = 1) -> Model:
     ``y = A1 exp(-x / tau1) + ... + An exp(-x / taun) + C``, ``n_terms`` from 1 to 3.
     ``x`` is the time from the start of the fitted region (see
     :func:`~ephys_forever.core.analysis.fit.fit_region`), so ``A`` values are amplitudes
-    at the first fitted sample. Time constants are bounded to be positive and are
-    reported in increasing order.
+    at the first fitted sample. Time constants are not bounded: a negative ``tau`` is
+    a rising exponential, as the commercial reference tool also reports. Terms are
+    reported in increasing order of ``tau``.
 
     Start values come from a grid search: for every combination of candidate time
     constants (log-spaced from half the sample interval to three times the fitted
-    span) the amplitudes and offset are solved linearly, and the combination with the
-    smallest squared error starts the nonlinear fit. This makes the fit independent of
-    user-supplied start values.
+    span, plus rising ones from -span / 20 to -3 span) the amplitudes and offset are
+    solved linearly, and the combination with the smallest squared error starts the
+    nonlinear fit. This makes the fit independent of user-supplied start values.
     """
     if n_terms not in GRID_SIZE:
         raise ValueError(f"exponential fits have 1 to 3 terms, got {n_terms}")
     names = [n for i in range(1, n_terms + 1) for n in (f"A{i}", f"tau{i}")] + ["C"]
-    lower = [v for _ in range(n_terms) for v in (-math.inf, 1e-300)] + [-math.inf]
     terms = " + ".join(f"A{i} exp(-x / tau{i})" for i in range(1, n_terms + 1))
     return Model(
         name=f"exponential_{n_terms}",
@@ -151,7 +158,6 @@ def exponential(n_terms: int = 1) -> Model:
         parameters=tuple(names),
         function=_exp_function(n_terms),
         guess=_exp_guess(n_terms),
-        lower=tuple(lower),
         canonical=_exp_canonical,
     )
 

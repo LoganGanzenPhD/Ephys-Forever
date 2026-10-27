@@ -1,0 +1,48 @@
+source_file: vclamp_iv_steps_001_bessel.atf    # in tests/data/real; byte-identical to the 1 kHz export
+original_file_name: "Voltage Clamp IV Steps Filter Bessel 3db cutoff 1000hz lowpass.atf"
+outputs:
+  single: "Voltage Clamp IV Steps Filter Bessel 3db cutoff 1000hz lowpass simplex single.atf"
+  double: "Voltage Clamp IV Steps Filter Bessel 3db cutoff 1000hz lowpass simplex double.atf"
+software_version: "Clampfit 11.2"
+exported_on: 2026-10-27
+exported_by: LG
+analysis: curve_fit
+sweeps: all
+channel: IN 0C
+fit_function: "Exponential, standard (zero-shift)"   # 1st and 2nd order
+fit_method:
+  # From LG's screenshots of the Fit dialog. Levenberg-Marquardt crashed the tool on
+  # this file, so Simplex was used; it also minimises the sum of squared errors.
+  search: simplex
+  minimisation: sum_of_squared_errors
+  weighting: none
+  seeds: automatic
+units: {amplitude: pA, time: ms}
+region:
+  # Not recorded in the export. The Sum of Data Squared column matches samples 2112 to
+  # 3095 exactly (one sample later than case vclamp_iv_steps_001_exp_fits), and
+  # Cursor 1 Intercept = sum(A) + C puts x = 0 at the first fitted sample.
+  first_sample: 2112
+  last_sample: 3095
+  region_ms: [105.60, 154.75]
+  cursor_samples: inclusive
+x_origin: first_fitted_sample
+columns:
+  single: {A: 6, A_se: 7, tau: 8, tau_se: 9, C: 10, C_se: 11}
+  double: {A1: 6, A1_se: 7, tau1: 8, tau1_se: 9, A2: 10, A2_se: 11, tau2: 12, tau2_se: 13, C: 14, C_se: 15}
+# Sweeps whose parameters are compared value by value (terms matched by tau). The
+# others are compared by SSE only, for the reasons below.
+compare_parameters:
+  single: [1, 2, 3, 4, 5, 6, 7, 9]   # sweep 2 is a rising exponential, tau = -9.48 ms
+  double: [4, 7, 8, 9]
+excluded: []
+coarse_parameters:
+  # Printed to too few digits to rebuild the reported SSE from the parameters.
+  - {fit: single, sweep: 8, reason: "A = -2.1e+08 pA, tau = 1.1e+09 ms, 2 significant digits"}
+notes: >
+  Not compared by parameters: single sweep 8 (the tool's Simplex stopped at
+  A = -2.1e8 pA, tau = 1.1e9 ms with SSE 41008 against our 28721); double sweeps 1, 2,
+  3, 5 and 6, where the second term is not determined by the data (the tool returns two
+  equal time constants or stops at its iteration limit, and Ephys-Forever's fit
+  returns two large cancelling terms). Our SSE is no higher on every compared sweep.
+shareable: false

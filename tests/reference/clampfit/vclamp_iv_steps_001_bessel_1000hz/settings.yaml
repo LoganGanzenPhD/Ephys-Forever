@@ -1,0 +1,25 @@
+source_file: vclamp_iv_steps_001.abf
+original_file_name: "Voltage Clamp IV Steps.abf"
+output_file: vclamp_iv_steps_001_bessel.atf   # in tests/data/real; byte-identical to this export
+original_output_name: "Voltage Clamp IV Steps Filter Bessel 3db cutoff 1000hz lowpass"
+software_version: "Clampfit 11.2"   # from file_properties.txt
+exported_on: 2026-10-26
+exported_by: LG
+analysis: filter
+sweeps: all
+channel: IN 0C                 # only IN 0C was filtered; IN 0 and IN 1 are unchanged
+filter:
+  type: bessel_lowpass
+  poles: 8
+  cutoff_hz: 1000              # as entered in the commercial tool (-3 dB)
+reproduced_by:
+  # Same design and cutoff scale as case vclamp_iv_steps_001_bessel. Exports at 1 kHz
+  # and 2 kHz both need the same factor (best fits 1.0016675 and 1.0016681, at the
+  # 6-digit rounding floor), so it is constant across cutoffs at 20 kHz sampling.
+  # See docs/differences.md.
+  design: matched_z
+  cutoff_scale: 1.0016677
+  start_samples_excluded: 50
+notes: >
+  Exported to ATF after filtering, values at 6 significant digits. The export is byte-identical to the earlier "Voltage Clamp IV Steps Bessel.atf" (case vclamp_iv_steps_001_bessel), so that file is reused rather than stored twice.
+shareable: false

@@ -10,7 +10,12 @@ analysis: curve_fit
 sweeps: all
 channel: IN 0C
 fit_function: "Exponential, standard"           # 1st and 2nd order
-fit_method: null               # search / minimisation / weighting not recorded; ask LG
+fit_method:
+  # From LG's screenshots of the Fit dialog (2026-10-27): "Select fitting methods
+  # automatically" was on, and the tool chose its Chebyshev search.
+  search: chebyshev
+  minimisation: sum_of_squared_errors
+  weighting: none
 units: {amplitude: pA, time: ms}
 region:
   # Not recorded in the export. Inferred from it: 984 points, the Sum of Data Squared
@@ -30,9 +35,8 @@ columns:
 notes: >
   Clampfit's parameters are not least-squares minima for most sweeps: Ephys-Forever's
   fits reach a lower sum of squared errors on every sweep it can fit, so parameters
-  are compared through SSE rather than value by value until the fit method is known.
-  Single-exponential sweep 2 has tau = -730.6 ms (a rising exponential), outside
-  Ephys-Forever's tau > 0 bound, and is excluded from the SSE comparison.
-excluded:
-  - {fit: single, sweep: 2, reason: "negative tau, outside the model's bounds"}
+  are compared through SSE rather than value by value; the Chebyshev search is not a
+  least-squares method. Single-exponential sweep 2 has tau = -730.6 ms (a rising
+  exponential); Ephys-Forever allows negative tau, so it is compared like the rest.
+excluded: []
 shareable: false

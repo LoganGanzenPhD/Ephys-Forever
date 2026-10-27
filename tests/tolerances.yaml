@@ -10,6 +10,9 @@ fit:
   # Our least-squares SSE may exceed the commercial tool's reported SSE by at most this
   # fraction (its values carry 6 significant digits). Added 2026-10-25.
   sse_vs_clampfit:  {rtol: 1.0e-5}
+  # Parameters against the commercial tool's least-squares (Simplex) fits, on sweeps
+  # where the fit is well determined. Added 2026-10-27; observed worst 1.2e-5.
+  params_vs_clampfit_least_squares: {rtol: 1.0e-3}
 events:
   time_window_s: 0.0005        # a detected event within 0.5 ms of a true event is a hit
   min_recall: 0.95
