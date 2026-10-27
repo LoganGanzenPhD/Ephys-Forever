@@ -102,6 +102,8 @@ Export results as CSV with one row per sweep and the exact column names from the
 | `ap_train` | Spike waveforms with known threshold, peak, width | Spike analysis |
 | `line_noise_60hz` | Signal plus 60 Hz and harmonics | Notch filter attenuation |
 | `bessel_step_response` | Step through a known filter | Filter cutoff definition |
+| `exp_decay_triple` | Three exponentials, τ 1, 8 and 60 ms | 3-term fit |
+| `hill_dose_response` | Dose-response table with known EC50 and Hill coefficient | Hill fit |
 
 Each generated file writes its analytic parameters to `reference/synthetic/<case>.yaml`. The generator uses a fixed random seed so output is byte-identical across runs.
 

@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-import math
 from collections.abc import Sequence
 
 from PySide6 import QtCore, QtWidgets
 
 from ephys_forever.core.analysis.regions import Region
+from ephys_forever.gui.widgets.results import ResultsTable
 
 POLARITIES = (
     ("Negative (inward current)", "negative"),
@@ -15,8 +15,6 @@ POLARITIES = (
     ("Either direction", "absolute"),
 )
 BASELINE_METHODS = (("Mean", "mean"), ("Median", "median"))
-HIDDEN_COLUMNS = ("file", "channel")
-"""Columns the table leaves out because every row has the same value; export keeps them."""
 MS = 1e-3
 """Region boxes show milliseconds; regions are stored in seconds."""
 
@@ -84,8 +82,7 @@ class MeasurePanel(QtWidgets.QWidget):
         self.measure_button = QtWidgets.QPushButton("Measure all sweeps")
         self.export_button = QtWidgets.QPushButton("Export...")
         self.export_button.setEnabled(False)
-        self.table = QtWidgets.QTableWidget()
-        self.table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.table = ResultsTable()
 
         form = QtWidgets.QFormLayout()
         form.addRow("Channel", self.channel_box)
@@ -137,26 +134,9 @@ class MeasurePanel(QtWidgets.QWidget):
 
     # -- results --------------------------------------------------------------------
     def clear_results(self) -> None:
-        self.table.clear()
-        self.table.setRowCount(0)
-        self.table.setColumnCount(0)
+        self.table.clear_results()
         self.export_button.setEnabled(False)
 
     def show_results(self, header: Sequence[str], rows: Sequence[Sequence[object]]) -> None:
-        """Fill the table; floats are shown to 6 significant digits, NaN as blank."""
-        self.table.clear()
-        self.table.setColumnCount(len(header))
-        self.table.setRowCount(len(rows))
-        self.table.setHorizontalHeaderLabels(list(header))
-        for r, row in enumerate(rows):
-            for c, value in enumerate(row):
-                if isinstance(value, float):
-                    text = "" if math.isnan(value) else f"{value:.6g}"
-                else:
-                    text = str(value)
-                self.table.setItem(r, c, QtWidgets.QTableWidgetItem(text))
-        for c, name in enumerate(header):
-            self.table.setColumnHidden(c, name in HIDDEN_COLUMNS)
-        self.table.verticalHeader().setVisible(False)
-        self.table.resizeColumnsToContents()
+        self.table.show_results(header, rows)
         self.export_button.setEnabled(bool(rows))

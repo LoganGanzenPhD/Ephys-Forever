@@ -7,10 +7,11 @@ from collections.abc import Sequence
 import pyqtgraph as pg
 
 from ephys_forever.core.analysis.regions import Region
-from ephys_forever.core.model import Recording
+from ephys_forever.core.model import FloatArray, Recording
 from ephys_forever.gui.views.envelope import Envelope
 
 SELECTED_PEN = pg.mkPen("k", width=1)
+FIT_PEN = pg.mkPen((220, 30, 30), width=2)
 LEFT_AXIS_WIDTH = 80
 """Fixed width for every y axis, so the rows line up and linked x ranges match exactly."""
 POINTS_PER_PIXEL = 4
@@ -54,6 +55,8 @@ class TraceView(pg.GraphicsLayoutWidget):  # type: ignore[misc]
         self.regions: dict[str, Region] = {}
         self.region_items: dict[int, dict[str, pg.LinearRegionItem]] = {}
         self._baseline_visible = True
+        self.fits: dict[int, dict[int, tuple[FloatArray, FloatArray]]] = {}
+        self.fit_items: list[tuple[int, pg.PlotDataItem]] = []
 
     # -- public API ---------------------------------------------------------------
     def set_recording(self, recording: Recording) -> None:
@@ -63,6 +66,7 @@ class TraceView(pg.GraphicsLayoutWidget):  # type: ignore[misc]
         self.overlay = False
         self.channels = list(range(recording.n_channels))
         self._envelopes.clear()
+        self.fits.clear()
         duration = recording.sweeps[0].duration
         for name in REGION_NAMES:
             kept = self.regions.get(name)
@@ -70,6 +74,25 @@ class TraceView(pg.GraphicsLayoutWidget):  # type: ignore[misc]
                 lo, hi = DEFAULT_REGIONS[name]
                 self.regions[name] = Region(lo * duration, hi * duration)
         self._rebuild()
+
+    def replace_data(self, recording: Recording) -> None:
+        """Show new data of the same shape (for example after filtering), keeping the
+        selected sweep, overlay, visible channels, cursors and zoom."""
+        old = self._require()
+        if (recording.n_sweeps, recording.n_channels) != (old.n_sweeps, old.n_channels):
+            raise ValueError("replace_data needs the same sweeps and channels")
+        self.recording = recording
+        self._envelopes.clear()
+        self._redraw()
+
+    def set_fits(self, channel: int, fits: dict[int, tuple[FloatArray, FloatArray]]) -> None:
+        """Draw fitted curves ``{sweep: (t, y)}`` over a channel's traces, in red."""
+        self.fits[channel] = dict(fits)
+        self._show_fits()
+
+    def clear_fits(self) -> None:
+        self.fits.clear()
+        self._show_fits()
 
     def show_sweep(self, index: int) -> None:
         """Select sweep ``index``; in overlay mode it is drawn on top in black."""
@@ -147,6 +170,7 @@ class TraceView(pg.GraphicsLayoutWidget):  # type: ignore[misc]
         self.plots.clear()
         self.curves.clear()
         self.region_items.clear()
+        self.fit_items.clear()
         rec = self._require()
         for row, c in enumerate(self.channels):
             channel = rec.channels[c]
@@ -240,8 +264,26 @@ class TraceView(pg.GraphicsLayoutWidget):  # type: ignore[misc]
                 )
                 curve.setPen(pen)
                 curves[k] = (s, curve)
+        self._show_fits()
         if redraw:
             self._redraw()
+
+    def _show_fits(self) -> None:
+        """One red curve per drawn sweep that has a fit, on top of the traces."""
+        for c, item in self.fit_items:
+            if c in self.plots:
+                self.plots[c].removeItem(item)
+        self.fit_items.clear()
+        for c, fits in self.fits.items():
+            if c not in self.plots:
+                continue
+            for s, _ in self.curves[c]:
+                if s in fits:
+                    t, y = fits[s]
+                    item = pg.PlotDataItem(t, y, pen=FIT_PEN)
+                    item.setZValue(10)
+                    self.plots[c].addItem(item)
+                    self.fit_items.append((c, item))
 
     def _redraw(self) -> None:
         """Refill every curve for the current x range at screen resolution."""

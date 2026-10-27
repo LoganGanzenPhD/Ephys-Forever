@@ -17,6 +17,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Literal
 
+from ephys_forever.core.analysis.fit import FitResult
 from ephys_forever.core.analysis.measure import RegionStats
 from ephys_forever.core.model import Channel
 
@@ -242,3 +243,73 @@ def write_table(
             f"use one of {', '.join(WRITERS)}"
         )
     writer(path, header, rows)
+
+
+def _param_unit(model: str, param: str, channel: Channel, units: UnitSystem) -> tuple[str, float]:
+    """Unit of a fit parameter: exponential amplitudes and offset take the channel's
+    unit and time constants take time; other models' parameters stay unlabelled SI."""
+    if not model.startswith("exponential"):
+        return "", 1.0
+    if param.startswith("tau"):
+        return field_unit("rise_time", channel, units)
+    return field_unit("peak", channel, units)
+
+
+def fit_results_table(
+    results: Sequence[FitResult],
+    channel: Channel,
+    *,
+    units: UnitSystem = "display",
+    sweeps: Sequence[int] | None = None,
+    source: str = "",
+) -> tuple[list[str], list[list[str | int | float]]]:
+    """Header and rows for fits of one model, one row per sweep.
+
+    Columns are ``file``, ``sweep``, ``channel``, ``model``, then each parameter and its
+    standard error (``tau1 (ms)``, ``tau1_se (ms)``), then ``r_squared``,
+    ``residual_sd``, ``n_points``, ``fit_start`` and ``converged``. Exponential
+    amplitudes and offsets use the channel's display unit and time constants ms;
+    parameters of other models are written in SI without a unit label.
+
+    Raises
+    ------
+    ValueError
+        If the results mix models, or the sweep list does not match.
+    """
+    if not results:
+        return [], []
+    models = {r.model for r in results}
+    if len(models) != 1:
+        raise ValueError(f"a fit table holds one model, got {sorted(models)}")
+    model = results[0].model
+    indices = list(range(len(results))) if sweeps is None else list(sweeps)
+    if len(indices) != len(results):
+        raise ValueError(f"{len(indices)} sweep numbers for {len(results)} fits")
+    names = list(results[0].params)
+    units_of = {n: _param_unit(model, n, channel, units) for n in names}
+    signal_label, signal_div = field_unit("peak", channel, units)
+    time_label, time_div = field_unit("rise_time", channel, units)
+
+    def label(name: str, unit: str) -> str:
+        return f"{name} ({unit})" if unit else name
+
+    header = ["file", "sweep", "channel", "model"]
+    for n in names:
+        header += [label(n, units_of[n][0]), label(f"{n}_se", units_of[n][0])]
+    header += [
+        "r_squared",
+        label("residual_sd", signal_label),
+        "n_points",
+        label("fit_start", time_label),
+        "converged",
+    ]
+    rows: list[list[str | int | float]] = []
+    for sweep, r in zip(indices, results, strict=True):
+        row: list[str | int | float] = [source, sweep + 1, channel.name, model]
+        for n in names:
+            div = units_of[n][1]
+            row += [r.params[n] / div, r.stderr[n] / div]
+        row += [r.r_squared, r.residual_sd / signal_div, r.n_points, r.x_offset / time_div]
+        row.append("yes" if r.converged else "no")
+        rows.append(row)
+    return header, rows

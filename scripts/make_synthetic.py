@@ -477,6 +477,69 @@ def bessel_step_response() -> Case:
     )
 
 
+def exp_decay_triple() -> Case:
+    """Three-exponential decays, noise-free and noisy, with time constants 1, 8 and 60 ms."""
+    rng = case_rng(9)
+    fs, n = 20_000.0, 8_000
+    params = {"A1": 60e-12, "tau1": 1e-3, "A2": 40e-12, "tau2": 8e-3, "A3": 20e-12, "tau3": 60e-3}
+    c, sigma = -5e-12, 0.5e-12
+    t = time_axis(fs, n)
+    clean = c + sum(params[f"A{i}"] * np.exp(-t / params[f"tau{i}"]) for i in (1, 2, 3))
+    sweeps = [clean, clean + rng.normal(0.0, sigma, n)]
+    truth: dict[str, YamlValue] = {
+        "model": "A1 * exp(-t / tau1) + A2 * exp(-t / tau2) + A3 * exp(-t / tau3) + C, "
+        "t from the first sample",
+        "params": {**params, "C": c},
+        "sweeps": [
+            {"sweep": 1, "noise_sigma": 0.0},
+            {"sweep": 2, "noise_sigma": sigma},
+        ],
+    }
+    return Case(
+        "exp_decay_triple",
+        "voltage_clamp",
+        "Three exponentials, time constants 1, 8 and 60 ms",
+        Channel("IN0", "A", "current"),
+        fs,
+        sweep_columns(t, sweeps, "A"),
+        truth,
+    )
+
+
+def hill_dose_response() -> Case:
+    """Dose-response table: ``bottom + (top - bottom) * x^n / (EC50^n + x^n)``."""
+    rng = case_rng(10)
+    top, bottom, ec50, n_hill = 1.2e-9, 0.05e-9, 3e-6, 1.6
+    sigma = 0.02 * top
+    conc = np.round(np.logspace(-8, -3, 21), 15)  # molar, 10 nM to 1 mM
+    clean = bottom + (top - bottom) * conc**n_hill / (ec50**n_hill + conc**n_hill)
+    noisy = clean + rng.normal(0.0, sigma, conc.size)
+    truth: dict[str, YamlValue] = {
+        "model": "bottom + (top - bottom) * x^n / (EC50^n + x^n)",
+        "params": {"top": top, "bottom": bottom, "EC50": ec50, "n": n_hill},
+        "columns": {
+            "Concentration": "agonist concentration, mol/L (written in M)",
+            "Current": "noise-free peak current",
+            "Current noisy": f"Gaussian noise, sigma = {sigma!r} A",
+        },
+        "noise": {"kind": "gaussian", "sigma": sigma},
+    }
+    cols = [
+        Column("Concentration", "M", conc),
+        Column("Current", "A", clean),
+        Column("Current noisy", "A", noisy),
+    ]
+    return Case(
+        "hill_dose_response",
+        "table",
+        "Dose-response curve with known EC50 and Hill coefficient",
+        Channel("I", "A", "current"),
+        None,
+        cols,
+        truth,
+    )
+
+
 CASES: list[Callable[[], Case]] = [
     step_known_amplitude,
     exp_decay_single,
@@ -486,6 +549,8 @@ CASES: list[Callable[[], Case]] = [
     ap_train,
     line_noise_60hz,
     bessel_step_response,
+    exp_decay_triple,
+    hill_dose_response,
 ]
 
 

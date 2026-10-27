@@ -7,7 +7,19 @@ measurements:
 fit:
   tau_vs_synthetic: {rtol: 1.0e-2}
   tau_vs_clampfit:  {rtol: 2.0e-2}
+  # Our least-squares SSE may exceed the commercial tool's reported SSE by at most this
+  # fraction (its values carry 6 significant digits). Added 2026-10-25.
+  sse_vs_clampfit:  {rtol: 1.0e-5}
 events:
   time_window_s: 0.0005        # a detected event within 0.5 ms of a true event is a hit
   min_recall: 0.95
   max_false_positive_rate: 0.05
+filters:
+  # Digital (bilinear) Bessel vs the exact analog step response: worst case 0.8 % at
+  # cutoff = sample_rate / 25. Added 2026-10-25 with the filters; not a loosening.
+  rise_time_vs_synthetic: {rtol: 1.0e-2}
+  delay_vs_synthetic: {rtol: 1.0e-3}
+  overshoot_vs_synthetic: {atol: 2.0e-3}
+  # Against the commercial tool's filtered ATF export (6 significant digits): max |error|
+  # after the start, as a fraction of the sweep's largest |value|. Added 2026-10-25.
+  bessel_vs_clampfit: {rtol: 5.0e-6}

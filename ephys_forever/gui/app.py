@@ -1,5 +1,5 @@
 """Desktop viewer: open a recording, browse sweeps and channels, zoom, pan, overlay,
-and measure between cursors.
+measure between cursors, filter, and fit curves.
 
 Run with ``python -m ephys_forever.gui.app [file]``.
 """
@@ -11,10 +11,22 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import cast
 
+import numpy as np
 import pyqtgraph as pg
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from ephys_forever import __version__
+from ephys_forever.core.analysis.filters import filter_recording
+from ephys_forever.core.analysis.fit import (
+    BUILT_IN,
+    ExpressionError,
+    FitError,
+    FitResult,
+    Model,
+    curve,
+    custom,
+    fit_region,
+)
 from ephys_forever.core.analysis.measure import Polarity, measure_sweeps
 from ephys_forever.core.analysis.regions import RegionError
 from ephys_forever.core.io.errors import ReaderError
@@ -22,8 +34,10 @@ from ephys_forever.core.io.registry import FILE_FILTERS, read
 from ephys_forever.core.log import OperationLog
 from ephys_forever.core.model import Recording
 from ephys_forever.core.units import convert
-from ephys_forever.export.tables import results_table, write_table
+from ephys_forever.export.tables import fit_results_table, results_table, write_table
 from ephys_forever.gui.views.trace_view import TraceView
+from ephys_forever.gui.widgets.filter_panel import FilterPanel
+from ephys_forever.gui.widgets.fit_panel import FitPanel, StartValueError, parse_start_values
 from ephys_forever.gui.widgets.measure_panel import MeasurePanel
 from ephys_forever.gui.widgets.navigator import ChannelList, SweepNavigator
 
@@ -41,16 +55,18 @@ def file_dialog_filter() -> str:
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    """Main window: trace plots in the centre, channels on the left, measurements right."""
+    """Main window: trace plots in the centre, channels on the left, analysis tabs right."""
 
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle(APP_NAME)
         self.resize(1400, 800)
         self.recording: Recording | None = None
+        self.raw_recording: Recording | None = None
         self.file_name = ""
         self.log = OperationLog()
         self.results: tuple[list[str], list[list[str | int | float]]] | None = None
+        self.fit_results: tuple[list[str], list[list[str | int | float]]] | None = None
         self.view = TraceView()
         self.setCentralWidget(self.view)
 
@@ -58,10 +74,10 @@ class MainWindow(QtWidgets.QMainWindow):
         toolbar = self.addToolBar("Sweeps")
         toolbar.setObjectName("sweeps")
         toolbar.addWidget(self.navigator)
-        fit = toolbar.addAction("Fit")
-        fit.setToolTip("Fit all plots to their data (A)")
-        fit.setShortcut(QtGui.QKeySequence("A"))
-        fit.triggered.connect(self.view.auto_range)
+        autoscale = toolbar.addAction("Autoscale")
+        autoscale.setToolTip("Fit all plots to their data (A)")
+        autoscale.setShortcut(QtGui.QKeySequence("A"))
+        autoscale.triggered.connect(self.view.auto_range)
 
         self.channel_list = ChannelList()
         dock = QtWidgets.QDockWidget("Channels", self)
@@ -70,10 +86,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, dock)
 
         self.measure_panel = MeasurePanel()
-        measure_dock = QtWidgets.QDockWidget("Measurements", self)
-        measure_dock.setObjectName("measurements")
-        measure_dock.setWidget(self.measure_panel)
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, measure_dock)
+        self.fit_panel = FitPanel()
+        self.filter_panel = FilterPanel()
+        self.tabs = QtWidgets.QTabWidget()
+        self.tabs.addTab(self.measure_panel, "Measure")
+        self.tabs.addTab(self.fit_panel, "Fit")
+        self.tabs.addTab(self.filter_panel, "Filter")
+        analysis_dock = QtWidgets.QDockWidget("Analysis", self)
+        analysis_dock.setObjectName("analysis")
+        analysis_dock.setWidget(self.tabs)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, analysis_dock)
 
         menu = self.menuBar().addMenu("&File")
         open_action = menu.addAction("&Open...")
@@ -103,7 +125,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.measure_panel.regionEdited.connect(self.view.set_region)
         self.measure_panel.baselineToggled.connect(self.view.set_baseline_visible)
         self.measure_panel.measureRequested.connect(self.run_measurement)
-        self.measure_panel.exportRequested.connect(self.choose_export_file)
+        self.measure_panel.exportRequested.connect(lambda: self.choose_export_file("measure"))
+        self.fit_panel.fitRequested.connect(self.run_fit)
+        self.fit_panel.clearRequested.connect(self.clear_fits)
+        self.fit_panel.exportRequested.connect(lambda: self.choose_export_file("fit"))
+        self.filter_panel.applyRequested.connect(self.apply_filter)
+        self.filter_panel.resetRequested.connect(self.remove_filters)
         self.statusBar().showMessage("Open a recording with File > Open (Ctrl+O)")
 
     def choose_file(self) -> None:
@@ -125,14 +152,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def set_recording(self, recording: Recording, title: str = "") -> None:
         self.recording = recording
+        self.raw_recording = recording
         self.file_name = title
         self.results = None
+        self.fit_results = None
         self.view.set_recording(recording)
         self.navigator.set_count(recording.n_sweeps)
         labels = [f"{c.name} ({c.metadata.get('file_unit') or c.unit})" for c in recording.channels]
         self.channel_list.set_channels(labels)
         currents = [i for i, c in enumerate(recording.channels) if c.kind == "current"]
-        self.measure_panel.set_channels(labels, currents[0] if currents else 0)
+        default = currents[0] if currents else 0
+        for panel in (self.measure_panel, self.fit_panel, self.filter_panel):
+            panel.set_channels(labels, default)
         for name, region in self.view.regions.items():
             self.measure_panel.set_region(name, region)
         if title:
@@ -177,6 +208,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 "baseline_region": None if baseline is None else [baseline.start, baseline.stop],
                 "baseline_method": method,
                 "rise_fractions": [0.1, 0.9],
+                "filters": list(rec.metadata.get("filters", ())),
             },
             input_sha256=str(rec.metadata.get("sha256", "")),
             input_name=self.file_name,
@@ -185,25 +217,134 @@ class MainWindow(QtWidgets.QMainWindow):
         panel.show_results(*self.results)
         return True
 
-    def choose_export_file(self) -> None:
+    # -- fitting ----------------------------------------------------------------------
+    def _fit_model(self) -> tuple[Model, dict[str, float] | None]:
+        """The chosen model and, for custom expressions, the typed start values."""
+        name = self.fit_panel.model()
+        if name != "custom":
+            return BUILT_IN[name](), None
+        model = custom(self.fit_panel.expression.text())
+        return model, parse_start_values(self.fit_panel.start_values.text())
+
+    def run_fit(self, all_sweeps: bool) -> bool:
+        """Fit the blue region of the selected sweep (or every sweep), log, and draw."""
+        rec = self.recording
+        if rec is None:
+            return False
+        channel = self.fit_panel.channel()
+        region = self.view.regions["measure"]
+        sweeps = list(range(rec.n_sweeps)) if all_sweeps else [self.view.sweep]
+        try:
+            model, p0 = self._fit_model()
+            results: list[FitResult] = [
+                fit_region(model, rec.sweeps[s].data[channel], rec.sample_rate, region, p0)
+                for s in sweeps
+            ]
+        except (ExpressionError, StartValueError, FitError, RegionError, ValueError) as exc:
+            self.show_error("Cannot fit", str(exc))
+            return False
+        self.log.record(
+            "ephys_forever.core.analysis.fit.fit_region",
+            {
+                "model": model.name,
+                "formula": model.formula,
+                "p0": p0,
+                "channel": channel,
+                "channel_name": rec.channels[channel].name,
+                "region": [region.start, region.stop],
+                "sweeps": sweeps,
+                "filters": list(rec.metadata.get("filters", ())),
+            },
+            input_sha256=str(rec.metadata.get("sha256", "")),
+            input_name=self.file_name,
+        )
+        fits = {}
+        for s, result in zip(sweeps, results, strict=True):
+            i0, i1 = region.indices(rec.sample_rate, rec.sweeps[s].n_samples)
+            t = np.arange(i0, i1, dtype=np.float64) / rec.sample_rate
+            fits[s] = (t, curve(model, result, t))
+        self.view.set_fits(channel, fits)
+        self.fit_results = fit_results_table(
+            results, rec.channels[channel], sweeps=sweeps, source=self.file_name
+        )
+        self.fit_panel.show_results(*self.fit_results)
+        if not all(r.converged for r in results):
+            self.statusBar().showMessage("Some fits did not converge; see the converged column")
+        return True
+
+    def clear_fits(self) -> None:
+        self.view.clear_fits()
+        self.fit_results = None
+        self.fit_panel.clear_results()
+
+    # -- filtering ----------------------------------------------------------------------
+    def apply_filter(self, channel: int, name: str, params: dict[str, object]) -> bool:
+        """Filter one channel of every sweep of the displayed data, and log it."""
+        rec = self.recording
+        if rec is None:
+            return False
+        try:
+            filtered = filter_recording(rec, channel, name, **params)
+        except (ValueError, KeyError, IndexError) as exc:
+            self.show_error("Cannot filter", str(exc))
+            return False
+        self.log.record(
+            "ephys_forever.core.analysis.filters.filter_recording",
+            {
+                "channel": channel,
+                "channel_name": rec.channels[channel].name,
+                "name": name,
+                "params": params,
+            },
+            input_sha256=str(rec.metadata.get("sha256", "")),
+            input_name=self.file_name,
+        )
+        self._show_filtered(filtered)
+        return True
+
+    def remove_filters(self) -> None:
+        """Go back to the data as read from the file. Not logged: every logged analysis
+        lists the filters it ran on, so the log already shows the data each one used."""
+        if self.raw_recording is not None and self.recording is not self.raw_recording:
+            self._show_filtered(self.raw_recording)
+
+    def _show_filtered(self, recording: Recording) -> None:
+        self.recording = recording
+        self.view.replace_data(recording)
+        self.clear_fits()
+        self.results = None
+        self.measure_panel.clear_results()
+        self.filter_panel.show_applied(
+            [
+                f"{recording.channels[f['channel']].name}: {f['name']} "
+                + ", ".join(f"{k}={v}" for k, v in f["params"].items())
+                for f in recording.metadata.get("filters", ())
+            ]
+        )
+
+    # -- export -------------------------------------------------------------------------
+    def choose_export_file(self, which: str = "measure") -> None:
         stem = Path(self.file_name).stem or "results"
+        suffix = "fits" if which == "fit" else "measurements"
         path, chosen = QtWidgets.QFileDialog.getSaveFileName(
             self,
             "Export results",
-            f"{stem}_measurements.csv",
+            f"{stem}_{suffix}.csv",
             ";;".join(name for name, _ in EXPORT_FILTERS),
         )
         if not path:
             return
         if not Path(path).suffix:
             path += dict(EXPORT_FILTERS).get(chosen, ".csv")
-        self.export_results(path)
+        self.export_results(path, which)
 
-    def export_results(self, path: str | Path) -> bool:
-        if self.results is None:
+    def export_results(self, path: str | Path, which: str = "measure") -> bool:
+        """Write the measurement (``"measure"``) or fit (``"fit"``) results to ``path``."""
+        table = self.fit_results if which == "fit" else self.results
+        if table is None:
             return False
         try:
-            write_table(path, *self.results)
+            write_table(path, *table)
         except (OSError, ImportError, ValueError) as exc:
             self.show_error("Could not export results", str(exc))
             return False

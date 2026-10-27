@@ -103,3 +103,29 @@
   acquired_with: "scripts/make_synthetic.py v1"
   notes: "Step through a known filter"
   shareable: true
+- file: "exp_decay_triple.atf"
+  format: "atf"
+  mode: "voltage_clamp"
+  n_sweeps: 2
+  n_channels: 1
+  channels:
+    - name: "IN0"
+      unit: "A"
+      kind: "current"
+  sample_rate_hz: 20000.0
+  acquired_with: "scripts/make_synthetic.py v1"
+  notes: "Three exponentials, time constants 1, 8 and 60 ms"
+  shareable: true
+- file: "hill_dose_response.atf"
+  format: "atf"
+  mode: "table"
+  n_sweeps: 0
+  n_channels: 1
+  channels:
+    - name: "I"
+      unit: "A"
+      kind: "current"
+  sample_rate_hz: null
+  acquired_with: "scripts/make_synthetic.py v1"
+  notes: "Dose-response curve with known EC50 and Hill coefficient"
+  shareable: true

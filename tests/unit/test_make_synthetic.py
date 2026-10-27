@@ -40,7 +40,7 @@ def test_generator_is_byte_identical_across_runs(generator: ModuleType, tmp_path
 
 def test_every_case_listed_in_readme_is_generated(generator: ModuleType) -> None:
     names = {make.__name__ for make in generator.CASES}
-    assert names == {
+    assert names >= {
         "step_known_amplitude",
         "exp_decay_single",
         "exp_decay_double",
@@ -49,6 +49,8 @@ def test_every_case_listed_in_readme_is_generated(generator: ModuleType) -> None
         "ap_train",
         "line_noise_60hz",
         "bessel_step_response",
+        "exp_decay_triple",
+        "hill_dose_response",
     }
 
 

@@ -116,3 +116,43 @@ def test_parquet_round_trips_with_types_and_nulls(tmp_path: Path) -> None:
 def test_unknown_extension_is_refused(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match=r"\.txt.*\.csv, \.xlsx, \.parquet"):
         write_table(tmp_path / "x.txt", *nan_table())
+
+
+def test_fit_table_labels_exponential_units_and_standard_errors() -> None:
+    from ephys_forever.core.analysis.fit import exponential, fit_curve
+    from ephys_forever.export.tables import fit_results_table
+
+    t = np.arange(2000) / 20_000.0
+    y = exponential(1)(t, [-80e-12, 0.01, -5e-12]) + np.random.default_rng(1).normal(
+        0, 1e-13, t.size
+    )
+    result = fit_curve(exponential(1), t + 0.105, y, x_offset=0.105)
+    header, rows = fit_results_table([result], CURRENT, sweeps=[4], source="a.abf")
+    assert header[:8] == [
+        "file",
+        "sweep",
+        "channel",
+        "model",
+        "A1 (pA)",
+        "A1_se (pA)",
+        "tau1 (ms)",
+        "tau1_se (ms)",
+    ]
+    row = dict(zip(header, rows[0], strict=True))
+    assert row["sweep"] == 5 and row["model"] == "exponential_1"
+    assert row["tau1 (ms)"] == pytest.approx(10.0, rel=1e-2)
+    assert row["A1 (pA)"] == pytest.approx(-80.0, rel=1e-2)
+    assert 0 < row["tau1_se (ms)"] < 0.1
+    assert row["fit_start (ms)"] == pytest.approx(105.0)
+    assert row["converged"] == "yes"
+
+
+def test_fit_table_refuses_mixed_models() -> None:
+    from ephys_forever.core.analysis.fit import exponential, fit_curve
+    from ephys_forever.export.tables import fit_results_table
+
+    t = np.linspace(0, 1, 50)
+    a = fit_curve(exponential(1), t, np.exp(-t / 0.2))
+    b = fit_curve(exponential(2), t, np.exp(-t / 0.2) + np.exp(-t / 0.02))
+    with pytest.raises(ValueError, match="one model"):
+        fit_results_table([a, b], CURRENT)
