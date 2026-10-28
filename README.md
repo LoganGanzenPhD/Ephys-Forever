@@ -1,11 +1,4 @@
 # Ephys-Forever
 
-Open-source, cross-platform analysis of patch-clamp and other electrophysiology
-recordings. Development guidance is in [CLAUDE.md](CLAUDE.md) and the test layout
-is described in [tests/README.md](tests/README.md).
-
-```
-pip install -e ".[dev]"
-python scripts/make_synthetic.py   # regenerate synthetic test data
-pytest
-```
+This is an experiment to evaluate Claude Code's ability to create an open-source, cross-platform analysis of patch-clamp and other electrophysiology
+recordings.
